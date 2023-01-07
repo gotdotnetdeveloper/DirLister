@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
@@ -63,12 +64,11 @@ namespace Sander.DirLister.Core
 
 				foreach (var wildcard in _wildcards)
 				{
-					if (LikeOperator.LikeString(filename, wildcard, CompareMethod.Text))
-					{
-						return true;
-					}
-				}
+					var endsWith =	 filename.EndsWith(wildcard,StringComparison.InvariantCultureIgnoreCase);
 
+					if (endsWith == true)
+						return true;
+				}
 				return false;
 			}
 

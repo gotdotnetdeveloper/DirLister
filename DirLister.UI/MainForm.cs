@@ -19,6 +19,7 @@ namespace Sander.DirLister.UI
 	public sealed partial class MainForm : Form
 	{
 		private readonly Configuration _configuration;
+		private HashSet<string> _hashSetWildcards;
 
 
 		public MainForm(Configuration configuration,
@@ -35,6 +36,7 @@ namespace Sander.DirLister.UI
 			FilterTabs.SelectedTab = NoneTab;
 			InitializeInput(inputFolders);
 			InitializeOutput();
+			InitializeInitializeWildcards();
 
 			if (logs?.Count > 0)
 			{
@@ -53,6 +55,45 @@ namespace Sander.DirLister.UI
 
 
 			ConfigureCallbacks();
+		}
+
+
+
+
+		private void InitializeInitializeWildcards()
+		{
+			if (File.Exists("Wildcards.txt"))
+			{
+				var allText = File.ReadAllText("Wildcards.txt");
+				if (!string.IsNullOrEmpty(allText))
+				{
+					var allTextSplit = allText.Split(new[] { ";", "," }, StringSplitOptions.RemoveEmptyEntries);
+
+				 _hashSetWildcards = new HashSet<string>();
+
+
+					foreach (var s in allTextSplit)
+					{
+						if (!string.IsNullOrEmpty(s))
+						{
+							var trim = s.Trim();
+							if (!string.IsNullOrEmpty(trim))
+							{
+								_hashSetWildcards.Add($".{trim}" );
+							}
+						}
+					}
+
+					if (_hashSetWildcards.Any())
+					{
+						foreach (var wildcard in _hashSetWildcards)
+						{
+							WildcardList.Items.Add(new ListViewItem() { Text = wildcard });
+						}
+
+					}
+				}
+			}
 		}
 
 

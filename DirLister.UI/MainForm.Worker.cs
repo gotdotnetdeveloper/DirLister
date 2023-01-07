@@ -49,8 +49,15 @@ namespace Sander.DirLister.UI
 			StartButton.Enabled = false;
 			MainTabs.SelectedTab = LogTab;
 			await Core.DirLister.ListAsync(_configuration).ConfigureAwait(false);
-			Progress.Value = 0;
-			StartButton.Enabled = true;
+
+			// Running on the worker thread
+			Progress.Invoke((MethodInvoker)delegate {
+				// Running on the UI thread
+				Progress.Value = 0;
+				StartButton.Enabled = true;
+			});
+// Back on the worker thread
+
 		}
 
 
