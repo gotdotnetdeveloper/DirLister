@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Sander.DirLister.Core.TagLib;
 
 namespace Sander.DirLister.Core.Application.Writers
 {
 	internal sealed class CsvWriter : BaseWriter
 	{
 		private readonly StringBuilder _sb;
+		private int _number = 0;
 
 
 		internal CsvWriter(Configuration configuration, DateTimeOffset endDate, List<FileEntry> entries) : base(
@@ -20,7 +23,7 @@ namespace Sander.DirLister.Core.Application.Writers
 		protected internal override string Write()
 		{
 			GetHeaderLine();
-
+			_number = 1;
 			foreach (var entry in Entries)
 			{
 				GetFileLine(entry);
@@ -64,30 +67,36 @@ namespace Sander.DirLister.Core.Application.Writers
 
 		private void GetFileLine(FileEntry entry)
 		{
-			_sb.Append(Quote(Utils.EnsureBackslash(Utils.GetPath(entry.Fullname))));
-			_sb.Append($",{Quote(Utils.GetFileName(entry.Fullname))}");
+
+			_sb.Append($"{_number}");
+			_number++;
+			_sb.Append($";{Quote(Utils.EnsureBackslash(Utils.GetPath(entry.Fullname)))}");
+			_sb.Append($";{Quote(Utils.GetFileName(entry.Fullname))}");
+
+
+			//_sb.Append(entry.Fullname);
 
 			if (Configuration.IncludeSize)
 			{
-				_sb.Append($",{Quote(entry.Size)}");
+				_sb.Append($";{Quote(entry.Size)}");
 			}
 
 			if (Configuration.IncludeFileDates)
 			{
-				_sb.Append($",{Quote(entry.Created.ToLocalTime().ToString())}");
-				_sb.Append($",{Quote(entry.Modified.ToLocalTime())}");
+				_sb.Append($";{Quote(entry.Created.ToLocalTime().ToString())}");
+				_sb.Append($";{Quote(entry.Modified.ToLocalTime())}");
 			}
 
 			if (Configuration.IncludeMediaInfo)
 			{
-				_sb.Append($",{Quote(entry.MediaInfo?.MediaType.ToString())}");
-				_sb.Append($",{Quote(entry.MediaInfo?.Duration.TotalSeconds)}");
-				_sb.Append($",{Quote(entry.MediaInfo?.Height)}");
-				_sb.Append($",{Quote(entry.MediaInfo?.Width)}");
-				_sb.Append($",{Quote(entry.MediaInfo?.BitsPerPixel)}");
-				_sb.Append($",{Quote(entry.MediaInfo?.AudioBitRate)}");
-				_sb.Append($",{Quote(entry.MediaInfo?.AudioChannels)}");
-				_sb.Append($",{Quote(entry.MediaInfo?.AudioSampleRate)}");
+				_sb.Append($";{Quote(entry.MediaInfo?.MediaType.ToString())}");
+				_sb.Append($";{Quote(entry.MediaInfo?.Duration.TotalSeconds)}");
+				_sb.Append($";{Quote(entry.MediaInfo?.Height)}");
+				_sb.Append($";{Quote(entry.MediaInfo?.Width)}");
+				_sb.Append($";{Quote(entry.MediaInfo?.BitsPerPixel)}");
+				_sb.Append($";{Quote(entry.MediaInfo?.AudioBitRate)}");
+				_sb.Append($";{Quote(entry.MediaInfo?.AudioChannels)}");
+				_sb.Append($";{Quote(entry.MediaInfo?.AudioSampleRate)}");
 			}
 
 			_sb.AppendLine();

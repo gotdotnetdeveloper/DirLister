@@ -1,4 +1,6 @@
-﻿mp4
+﻿
+
+mp4
 ;dav
 ;264
 ;exo
@@ -1626,9 +1628,7 @@ mp3
 ;mtm
 ;nsf
 ;arp
-;md
 ;jcb
-;txt
 ;umx
 ;ple
 ;efx
